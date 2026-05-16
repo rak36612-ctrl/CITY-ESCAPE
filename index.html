@@ -1,0 +1,264 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Escape 3D</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&display=swap');
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Montserrat', sans-serif; color: white; user-select: none; }
+        canvas { display: block; filter: blur(10px); transition: filter 1s ease; }
+        .canvas-clear { filter: blur(0px) !important; }
+        
+        .hidden { display: none !important; }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .glass-card { background: rgba(20, 20, 30, 0.65); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 24px; padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; }
+        
+        /* Splash Screen */
+        #splashScreen { background: #0b0c10; z-index: 100; transition: opacity 1s; }
+        .logo-container { position: relative; }
+        .logo-text { font-size: 90px; font-style: italic; color: transparent; -webkit-text-stroke: 4px #00ffff; text-shadow: 0 0 20px #00ffff, 5px 5px 0px #ff00ff; }
+        .logo-glow { position: absolute; top:0; left:0; font-size: 90px; font-style: italic; color: #fff; text-shadow: 0 0 50px #00ffff; opacity: 0; }
+        
+        /* Main Menu */
+        #mainMenu { z-index: 50; }
+        .title { font-size: 70px; font-style: italic; color: #fff; text-shadow: 3px 3px 0 #ff00ff, -2px -2px 0 #00ffff; margin-bottom: 5px; }
+        .high-score { font-size: 24px; color: #ffd700; margin-bottom: 40px; text-shadow: 2px 2px 0 #000; }
+        .play-btn { background: linear-gradient(45deg, #ff00ff, #00ffff); border: none; padding: 20px 60px; font-size: 32px; font-weight: 900; color: white; border-radius: 50px; cursor: pointer; text-transform: uppercase; box-shadow: 0 10px 20px rgba(0,0,0,0.5); animation: pulse 2s infinite; font-family: 'Montserrat', sans-serif;}
+        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 20px rgba(0,255,255,0.5); } 50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(255,0,255,0.8); } 100% { transform: scale(1); box-shadow: 0 0 20px rgba(0,255,255,0.5); } }
+        
+        /* Setup Modal */
+        #setupModal { z-index: 60; }
+        .setup-title { font-size: 32px; margin-bottom: 20px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; font-size: 14px; color: #ccc; margin-bottom: 8px; text-transform: uppercase; }
+        .input-field { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #555; background: rgba(0,0,0,0.6); color: white; font-size: 18px; font-family: 'Montserrat', sans-serif; box-sizing: border-box; outline: none; transition: 0.3s; }
+        .input-field:focus { border-color: #00ffff; }
+        .avatar-select, .diff-select { display: flex; gap: 15px; justify-content: center; margin-bottom: 20px; }
+        .avatar-btn { width: 50px; height: 50px; border-radius: 50%; border: 3px solid #555; cursor: pointer; transition: 0.2s; }
+        .avatar-btn.selected { border-color: #00ffff; transform: scale(1.2); box-shadow: 0 0 15px #00ffff; }
+        .diff-btn { padding: 10px 20px; background: #333; border: 2px solid #555; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; transition: 0.2s; font-family: 'Montserrat', sans-serif; }
+        .diff-btn.selected { background: #ff00ff; border-color: #fff; box-shadow: 0 0 15px #ff00ff; }
+        .save-btn { background: #00ffff; color: #000; padding: 15px 40px; font-size: 20px; font-weight: bold; border: none; border-radius: 30px; cursor: pointer; transition: 0.2s; font-family: 'Montserrat', sans-serif; }
+        .save-btn:hover { transform: scale(1.05); }
+
+        /* Countdown */
+        #countdownScreen { z-index: 70; font-size: 150px; font-style: italic; -webkit-text-stroke: 4px #000; text-shadow: 8px 8px 0 #ff00ff; }
+        
+        /* Game HUD - Premium Redesign */
+        #gameHUD { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; font-family: 'Montserrat', sans-serif; text-transform: uppercase; }
+        
+        .hud-top-left { position: absolute; top: 20px; left: 20px; display: flex; align-items: center; gap: 12px; background: rgba(0, 0, 0, 0.5); padding: 6px 20px 6px 6px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); }
+        .avatar-thumb { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        #playerNameDisplay { font-size: 16px; font-weight: 800; color: #fff; letter-spacing: 1px; }
+
+        .hud-top-center { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); text-align: center; }
+        .score-label { font-size: 14px; font-weight: 700; color: #aaa; letter-spacing: 3px; margin-bottom: -5px; }
+        .hud-score { font-size: 46px; font-weight: 900; color: #fff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.6); font-variant-numeric: tabular-nums; display: flex; justify-content: center; overflow: hidden; height: 55px; }
+        .digit { display: inline-block; width: 28px; text-align: center; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .hud-top-right { position: absolute; top: 20px; right: 20px; text-align: right; }
+        #distanceBox { font-size: 28px; font-weight: 900; font-style: italic; color: #00ffff; text-shadow: 0 0 15px rgba(0, 255, 255, 0.6); }
+
+        .center-badge { position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%) scale(0); font-size: 64px; font-weight: 900; font-style: italic; color: #ffff00; text-shadow: 0 0 30px #ff00ff, 4px 4px 0px #000; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .center-badge.show { transform: translate(-50%, -50%) scale(1); }
+        
+        .flash-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: transparent; pointer-events: none; z-index: 1; transition: background 0.2s; }
+        .danger-edge { position: absolute; top:0; height:100%; pointer-events:none; z-index:1; opacity:0; transition:opacity 0.2s; }
+        .danger-edge.left { left:0; width:30%; background: linear-gradient(90deg, rgba(255,0,0,0.5), transparent); }
+        .danger-edge.right { right:0; width:30%; background: linear-gradient(-90deg, rgba(255,0,0,0.5), transparent); }
+        .danger-edge.center { left:35%; width:30%; background: radial-gradient(ellipse at bottom, rgba(255,0,0,0.4) 0%, transparent 60%); bottom:0; height:50%; top:auto; }
+
+        .combo-float { position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); font-size: 40px; font-weight: 900; font-style: italic; color: #ff6600; text-shadow: 0 0 20px #ffaa00, 2px 2px 0px #000; pointer-events: none; z-index: 5; white-space: nowrap; }
+        .milestone-float { position: absolute; left: 50%; top: 20%; transform: translate(-50%, -50%); font-size: 70px; font-weight: 900; font-style: italic; color: #00ffff; text-shadow: 0 0 30px #0055ff, 4px 4px 0px #ff00ff; pointer-events: none; z-index: 5; white-space: nowrap; }
+
+        .hud-bottom-left { position: absolute; bottom: 30px; left: 30px; display: flex; align-items: center; gap: 10px; font-size: 36px; font-weight: 900; color: gold; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+        .coin-icon { font-size: 40px; }
+        #coinFloatContainer { position: absolute; bottom: 100%; left: 50%; }
+        .coin-plus { position: absolute; font-size: 24px; font-weight: 800; color: #ffeb3b; text-shadow: 0 0 10px #ff9900; white-space: nowrap; }
+
+        .hud-bottom-center { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); }
+        .pu-row { display: flex; gap: 20px; }
+        .pu-slot { position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.6); border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: transform 0.2s; }
+        .pu-slot.active { transform: scale(1.1); box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+        .pu-ring { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+        .pu-circle-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 4; }
+        .pu-circle-fill { fill: none; stroke-width: 4; stroke-dasharray: 100; stroke-dashoffset: 0; transition: stroke-dashoffset 0.1s linear; stroke-linecap: round; }
+        .pu-icon { font-size: 28px; z-index: 2; display: flex; align-items: center; justify-content: center; }
+
+        #speedBarContainer { position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.5); overflow: hidden; }
+        #speedBarFill { height: 100%; width: 0%; background: linear-gradient(90deg, #00ffff, #ff00ff, #ff0000); box-shadow: 0 0 10px #ff0000; transition: width 0.1s linear, background 0.3s; }
+        .redline { animation: redlinePulse 0.5s infinite alternate; }
+        @keyframes redlinePulse { 0% { box-shadow: 0 0 10px #ff0000; } 100% { box-shadow: 0 0 30px #ff0000, inset 0 0 10px #ff0000; } }
+
+        #settingsBtn { position: absolute; top: 20px; right: 20px; font-size: 30px; cursor: pointer; z-index: 55; background: none; border: none; filter: drop-shadow(2px 2px 2px #000); transition: 0.2s; }
+        #settingsBtn:hover { transform: rotate(45deg); }
+        
+        #themeBtn { position: absolute; top: 20px; right: 80px; font-size: 30px; cursor: pointer; z-index: 55; background: none; border: none; filter: drop-shadow(2px 2px 2px #000); transition: 0.2s; }
+        #themeBtn:hover { transform: scale(1.1); }
+        
+        /* Cinematic Game Over */
+        #gameover { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; flex-direction: column; justify-content: center; align-items: center; z-index: 80; perspective: 1000px; }
+        .vignette { position: absolute; top:0; left:0; width: 100%; height: 100%; background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.85) 100%); pointer-events: none; opacity: 0; transition: opacity 1.5s; }
+        .go-title { font-size: 90px; font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 3px #ff0055; text-shadow: 0 0 30px #ff0000, 8px 8px 0px #000; margin-bottom: 20px; z-index: 2; transform: translateY(-200px); opacity: 0; }
+        
+        .go-stats-panel { background: rgba(15, 15, 25, 0.7); backdrop-filter: blur(15px); border: 2px solid rgba(255, 255, 255, 0.15); border-radius: 24px; padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); z-index: 2; transform: translateY(200px) rotateX(10deg); opacity: 0; text-align: center; width: 400px; }
+        
+        .go-stat-row { display: flex; justify-content: space-between; font-size: 24px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+        .go-stat-label { color: #88ccee; font-weight: 700; }
+        .go-stat-val { font-weight: 900; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.4); font-variant-numeric: tabular-nums; }
+        
+        #newRecordBadge { display: none; background: #00ffff; color: #000; font-size: 16px; font-weight: 900; padding: 8px 16px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 0 20px #00ffff; animation: recordPulse 1s infinite alternate; letter-spacing: 2px; }
+        @keyframes recordPulse { 0% { transform: scale(1); box-shadow: 0 0 10px #00ffff; } 100% { transform: scale(1.1); box-shadow: 0 0 30px #00ffff; } }
+        
+        .go-buttons { display: flex; gap: 20px; margin-top: 30px; justify-content: center; z-index: 2; opacity: 0; transform: translateY(50px); }
+        .go-btn { padding: 15px 30px; font-size: 20px; font-weight: 900; border-radius: 30px; cursor: pointer; border: none; font-family: 'Montserrat', sans-serif; transition: 0.2s; text-transform: uppercase; }
+        .go-btn-primary { background: linear-gradient(45deg, #ff00ff, #00ffff); color: white; animation: pulse 2s infinite; }
+        .go-btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 30px #ff00ff; }
+        .go-btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 2px solid rgba(255,255,255,0.3); backdrop-filter: blur(5px); }
+        .go-btn-secondary:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="splashScreen" class="overlay">
+        <div class="logo-container">
+            <div class="logo-text">CITY ESCAPE</div>
+            <div class="logo-glow">CITY ESCAPE</div>
+        </div>
+    </div>
+
+    <div id="mainMenu" class="overlay hidden">
+        <button id="settingsBtn" title="Edit Profile">⚙️</button>
+        <div class="glass-card">
+            <div class="title">CITY ESCAPE</div>
+            <div class="high-score">HIGH SCORE: <span id="highScoreVal">000000</span></div>
+            <button class="play-btn" id="playBtn">TAP TO START</button>
+        </div>
+    </div>
+
+    <div id="setupModal" class="overlay hidden">
+        <div class="glass-card">
+            <div class="setup-title">PLAYER PROFILE & SETTINGS</div>
+            <div class="input-group">
+                <label>Time of Day / Theme</label>
+                <div style="display: flex; gap: 10px;">
+                    <button class="avatar-btn" id="themeLightBtn" style="flex:1; font-size: 20px;">🌞 Light</button>
+                    <button class="avatar-btn" id="themeDarkBtn" style="flex:1; font-size: 20px;">🌙 Dark</button>
+                    <button class="avatar-btn selected" id="themeAutoBtn" style="flex:1; font-size: 20px;">🌗 Auto</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Runner Name</label>
+                <input type="text" id="playerNameInput" class="input-field" placeholder="Enter name...">
+            </div>
+            <div class="input-group">
+                <label>Choose Avatar</label>
+                <div class="avatar-select">
+                    <div class="avatar-btn selected" data-color="0xff0000" style="background: #ff0000;"></div>
+                    <div class="avatar-btn" data-color="0x00ff00" style="background: #00ff00;"></div>
+                    <div class="avatar-btn" data-color="0x00aaff" style="background: #00aaff;"></div>
+                    <div class="avatar-btn" data-color="0xffffff" style="background: #ffffff;"></div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Difficulty</label>
+                <div class="diff-select">
+                    <button class="diff-btn" data-diff="25">ROOKIE</button>
+                    <button class="diff-btn selected" data-diff="35">STREET</button>
+                    <button class="diff-btn" data-diff="45">LEGEND</button>
+                </div>
+            </div>
+            <button class="save-btn" id="saveProfileBtn">SAVE & CONTINUE</button>
+        </div>
+    </div>
+
+    <div id="countdownScreen" class="overlay hidden">3</div>
+
+    <div id="gameHUD" class="hidden premium-hud">
+        <div id="dangerOverlayL" class="danger-edge left"></div>
+        <div id="dangerOverlayC" class="danger-edge center"></div>
+        <div id="dangerOverlayR" class="danger-edge right"></div>
+        <div id="flashOverlay" class="flash-overlay"></div>
+        
+        <div class="hud-top-left">
+            <div id="playerAvatar" class="avatar-thumb" style="background: #ff0000;"></div>
+            <div id="playerNameDisplay">PLAYER</div>
+        </div>
+
+        <div class="hud-top-center">
+            <div class="score-label">SCORE</div>
+            <div id="scoreBox" class="hud-score">
+                <!-- Digits will be populated by JS -->
+            </div>
+        </div>
+
+        <div class="hud-top-right">
+            <div id="distanceBox"><span id="distance">0</span>m</div>
+        </div>
+
+        <div id="multiplierBadge" class="center-badge hidden">x2 MULTIPLIER!</div>
+
+        <div class="hud-bottom-left">
+            <div class="coin-icon">💰</div>
+            <div id="coinBox"><span id="coins">0</span></div>
+            <div id="coinFloatContainer"></div>
+        </div>
+
+        <div class="hud-bottom-center">
+            <div id="powerupContainer" class="pu-row">
+                <div id="pu-jet" class="pu-slot hidden">
+                    <svg class="pu-ring" viewBox="0 0 36 36"><circle class="pu-circle-bg" cx="18" cy="18" r="16"></circle><circle class="pu-circle-fill" cx="18" cy="18" r="16" style="stroke:#ffaa00;"></circle></svg>
+                    <span class="pu-icon">🚀</span>
+                </div>
+                <div id="pu-magnet" class="pu-slot hidden">
+                    <svg class="pu-ring" viewBox="0 0 36 36"><circle class="pu-circle-bg" cx="18" cy="18" r="16"></circle><circle class="pu-circle-fill" cx="18" cy="18" r="16" style="stroke:#ff00ff;"></circle></svg>
+                    <span class="pu-icon">🧲</span>
+                </div>
+                <div id="pu-shield" class="pu-slot hidden">
+                    <svg class="pu-ring" viewBox="0 0 36 36"><circle class="pu-circle-bg" cx="18" cy="18" r="16"></circle><circle class="pu-circle-fill" cx="18" cy="18" r="16" style="stroke:#00aaff;"></circle></svg>
+                    <span class="pu-icon">🛡️</span>
+                </div>
+                <div id="pu-mult" class="pu-slot hidden">
+                    <svg class="pu-ring" viewBox="0 0 36 36"><circle class="pu-circle-bg" cx="18" cy="18" r="16"></circle><circle class="pu-circle-fill" cx="18" cy="18" r="16" style="stroke:#ffff00;"></circle></svg>
+                    <span class="pu-icon">⭐</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="speedBarContainer">
+            <div id="speedBarFill"></div>
+        </div>
+    </div>
+    
+    <div id="gameover">
+        <div class="vignette" id="goVignette"></div>
+        <div class="go-title" id="goTitle">WIPED OUT</div>
+        
+        <div class="go-stats-panel" id="goStats">
+            <div id="newRecordBadge">NEW RECORD!</div>
+            <div class="go-stat-row">
+                <span class="go-stat-label">DISTANCE RUN</span>
+                <span class="go-stat-val"><span id="goDist">0</span>m</span>
+            </div>
+            <div class="go-stat-row">
+                <span class="go-stat-label">COINS COLLECTED</span>
+                <span class="go-stat-val" id="goCoins">0</span>
+            </div>
+            <div class="go-stat-row">
+                <span class="go-stat-label">HIGH SCORE</span>
+                <span class="go-stat-val"><span id="goBest">0</span>m</span>
+            </div>
+        </div>
+
+        <div class="go-buttons" id="goBtns">
+            <button class="go-btn go-btn-secondary" id="btnMenu">MENU</button>
+            <button class="go-btn go-btn-primary" id="btnRunAgain">RUN AGAIN</button>
+        </div>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+</body>
+</html>
