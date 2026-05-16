@@ -378,10 +378,14 @@ const coinMat = new THREE.MeshStandardMaterial({
     roughness: 0.05 
 });
 
-// Sparkle array
+// Sparkle array (Optimized with basic limiter for mobile)
 const sparks = [];
+const sparkTex = createSparkleTex(); // Cache texture globally so we don't recreate it every coin pickup
+const sparkMat = new THREE.MeshBasicMaterial({ color: 0xffff88, transparent: true, blending: THREE.AdditiveBlending, map: sparkTex, depthWrite: false });
+const sparkGeom = new THREE.PlaneGeometry(1, 1);
 function createSparkle(pos) {
-    const sp = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ color: 0xffff88, transparent: true, blending: THREE.AdditiveBlending, map: createSparkleTex() }));
+    if (isMobile && Math.random() > 0.5) return; // Cut spark creation on mobile
+    const sp = new THREE.Mesh(sparkGeom, sparkMat);
     sp.position.copy(pos); scene.add(sp);
     sparks.push({ m: sp, life: 1 });
 }
@@ -701,14 +705,26 @@ function resetGame() {
 
 const clock = new THREE.Clock();
 
-// DUST PARTICLES
+// DUST PARTICLES (Optimized with Object Pooling)
 const dustGeom = new THREE.BoxGeometry(0.2, 0.2, 0.2); const dustMat = new THREE.MeshBasicMaterial({color: 0xcccccc});
 const dustArray = [];
+const dustPool = [];
 function spawnDust(x, z) {
-    for(let i=0; i<8; i++) {
-        const d = new THREE.Mesh(dustGeom, dustMat);
-        d.position.set(x + (Math.random()-0.5), 0.2, z + (Math.random()-0.5));
-        scene.add(d); dustArray.push({m: d, vx: (Math.random()-0.5)*5, vy: Math.random()*3 + 2, vz: (Math.random()-0.5)*5, life: 1.0});
+    const pCount = isMobile ? 2 : 6; // Drastically reduce particles on mobile to stop GC jitter
+    if (isMobile && Math.random() > 0.4) return;
+    for(let i=0; i<pCount; i++) {
+        let d;
+        if (dustPool.length > 0) {
+            d = dustPool.pop();
+            d.m.visible = true;
+        } else {
+            d = {m: new THREE.Mesh(dustGeom, dustMat)};
+            scene.add(d.m);
+        }
+        d.m.position.set(x + (Math.random()-0.5), 0.2, z + (Math.random()-0.5));
+        d.vx = (Math.random()-0.5)*5; d.vy = Math.random()*3 + 2; d.vz = (Math.random()-0.5)*5; d.life = 1.0;
+        d.m.scale.setScalar(1);
+        dustArray.push(d);
     }
 }
 
@@ -729,7 +745,7 @@ function animate() {
         const d = dustArray[i];
         d.m.position.x += d.vx * delta; d.m.position.y += d.vy * delta; d.m.position.z += d.vz * delta;
         d.vy -= 10 * delta; d.life -= 2 * delta; d.m.scale.setScalar(d.life);
-        if(d.life <= 0) { scene.remove(d.m); dustArray.splice(i, 1); }
+        if(d.life <= 0) { d.m.visible = false; dustPool.push(d); dustArray.splice(i, 1); }
     }
 
     // Animate sparks
