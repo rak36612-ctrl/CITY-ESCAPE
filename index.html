@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>City Escape 3D</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
@@ -118,6 +118,30 @@
         .go-btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 30px #ff00ff; }
         .go-btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 2px solid rgba(255,255,255,0.3); backdrop-filter: blur(5px); }
         .go-btn-secondary:hover { background: rgba(255,255,255,0.2); }
+        /* --- Mobile Optimization & Response --- */
+        @media (max-width: 768px) {
+            .glass-card { padding: 20px; width: 85%; max-height: 85vh; overflow-y: auto; }
+            .logo-text, .logo-glow { font-size: 50px; }
+            .title { font-size: 40px; }
+            .play-btn { padding: 15px 40px; font-size: 24px; }
+            
+            #gameHUD .top-bar { padding: 15px; margin-top: env(safe-area-inset-top, 0px); flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+            .player-info, .score-board, .speed-meter { flex: 1 1 100%; justify-content: center; }
+            .hud-name { font-size: 16px; margin: 0; }
+            .hud-level { font-size: 10px; margin: 0; }
+            .score-val { font-size: 24px; }
+            .multiplier { font-size: 16px; }
+            .speed-val { font-size: 20px; }
+            .coin-counter { top: auto; bottom: 80px; left: 15px; right: auto; transform: none; font-size: 20px; padding: 10px 20px; }
+            .powerup-container { bottom: 20px; width: 100%; gap: 15px; justify-content: center; right: 0; }
+            .pu-slot { width: 45px; height: 45px; border-width: 2px; }
+            .pu-icon { font-size: 20px; }
+            .pu-bar { height: 4px; }
+            #countdownScreen { font-size: 100px; }
+            
+            /* Smaller touch-friendly pause/settings buttons */
+            .settings-btn, .quit-btn { pointer-events: auto; }
+        }
     </style>
 </head>
 <body>

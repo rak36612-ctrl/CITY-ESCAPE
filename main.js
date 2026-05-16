@@ -8,9 +8,16 @@ const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerH
 camera.position.set(0, 5, 10);
 camera.lookAt(0, 2, -10);
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile }); // Disable antialias on mobile for performance
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio); // Cap pixel ratio on mobile
 renderer.shadowMap.enabled = true;
+if (isMobile) {
+    renderer.shadowMap.type = THREE.BasicShadowMap; // Cheaper shadows on mobile
+} else {
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // High quality on desktop
+}
 
 const vertexShader = `
 varying vec3 vWorldPosition;
@@ -612,6 +619,66 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
+/* --- Mobile Swipe Controls --- */
+let touchStartX = 0;
+let touchStartY = 0;
+const SWIPE_THRESHOLD = 30;
+
+window.addEventListener('touchstart', (e) => {
+    // Basic hit test to allow button clicks instead of swipe
+    if (e.target.tagName === 'BUTTON') return;
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+}, {passive: false});
+
+window.addEventListener('touchmove', (e) => {
+    // Prevent scrolling and pull-to-refresh on mobile while playing
+    if(gameState === 'PLAYING') e.preventDefault(); 
+}, {passive: false});
+
+window.addEventListener('touchend', (e) => {
+    if (gameState !== 'PLAYING') {
+        // Tap to restart if game over
+        if (gameState === 'GAMEOVER' && Math.abs(e.changedTouches[0].screenX - touchStartX) < 10) {
+            resetGame(); startCountdown();
+        }
+        return;
+    }
+    if (e.target.tagName === 'BUTTON') return;
+    
+    const touchEndX = e.changedTouches[0].screenX;
+    const touchEndY = e.changedTouches[0].screenY;
+    
+    const dx = touchEndX - touchStartX;
+    const dy = touchEndY - touchStartY;
+    
+    if (Math.abs(dx) > Math.abs(dy)) {
+        // Horizontal swipe
+        if (Math.abs(dx) > SWIPE_THRESHOLD) {
+            if (dx > 0 && currentLane < 1) { currentLane++; playSound('swipe'); vibrate(15); } // Right
+            else if (dx < 0 && currentLane > -1) { currentLane--; playSound('swipe'); vibrate(15); } // Left
+        }
+    } else {
+        // Vertical swipe
+        if (Math.abs(dy) > SWIPE_THRESHOLD) {
+            if (dy < 0 && !isJumping && !isSliding) { // Up
+                isJumping = true; jumpVelocity = 18; playSound('jump');
+                gsap.to(parts.torso.scale, {y: 0.7, x: 1.2, z: 1.2, duration: 0.1, yoyo: true, repeat: 1});
+                vibrate(20);
+            } else if (dy > 0 && !isJumping && !isSliding) { // Down
+                isSliding = true; slideTimer = 0.8; playSound('swipe');
+                vibrate(20);
+            }
+        }
+    }
+});
+
+function vibrate(ms) {
+    if (navigator.vibrate) {
+        try { navigator.vibrate(ms); } catch (err) {}
+    }
+}
+
 function resetGame() {
     isGameOver = false; speed = baseSpeed; distanceScore = 0; coinCount = 0; currentLane = 0; isSliding = false; isJumping = false;
     timeScale = 1.0; deathCamAngle = 0;
@@ -925,10 +992,12 @@ function animate() {
                         puUI.shield.wrap.classList.add('hidden');
                         shieldBubble.visible = false;
                         playSound('crash'); // Shield break
+                        vibrate([20, 50, 30]); // Haptic for shield break
                         scene.remove(ent); entities.splice(i, 1);
                         return;
                     }
                     isGameOver = true; gameState = 'GAMEOVER'; playSound('crash'); 
+                    vibrate([50, 100, 200]); // Heavy haptic for death crash
                     handleGameOverSequence();
                 };
 
@@ -974,6 +1043,7 @@ function animate() {
 
                         const amount = (activePowers.mult > 0 ? 2 : 1) * coinComboMultiplier;
                         coinCount += amount; document.getElementById('coins').innerText = coinCount; playSound('coin'); 
+                        vibrate(5); // Light tap for coin pickup
                         // Coin Float Animation
                         const floatMsg = document.createElement('div');
                         floatMsg.className = 'coin-plus'; floatMsg.innerText = '+' + amount;
