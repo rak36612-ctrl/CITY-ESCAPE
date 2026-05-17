@@ -97,10 +97,10 @@ walkR.position.set(15, 0.25, -100); walkR.receiveShadow = true; scene.add(walkR)
 // -------------------------------------------------------------
 const playerGroup = new THREE.Group();
 const parts = {};
-const skinMat = new THREE.MeshStandardMaterial({ color: 0xffccaa, roughness: 0.5 });
-const shirtMat = new THREE.MeshStandardMaterial({ color: 0xff0000, roughness: 0.8 });
-const pantsMat = new THREE.MeshStandardMaterial({ color: 0x0000ff, roughness: 0.8 });
-const shoeMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.9 });
+const skinMat = new THREE.MeshStandardMaterial({ color: 0xE8C99A, roughness: 0.5 }); // Warm beige
+const shirtMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8 }); // White Athletic Shirt
+const pantsMat = new THREE.MeshStandardMaterial({ color: 0x1a4db5, roughness: 0.8 }); // Royal Blue Shorts
+const shoeMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 }); // Black Shoes
 
 parts.torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.35, 0.7, 16, 16), shirtMat);
 parts.torso.position.y = 1.3; parts.torso.castShadow = true; playerGroup.add(parts.torso);

@@ -1,0 +1,18 @@
+# How to Run City Escape 3D
+
+Since this is a Vite-powered project, follow these steps to run the game locally:
+
+1. Open your terminal or command prompt.
+2. Make sure you are inside the `Jungle_Runner_Web3D` folder:
+   cd Jungle_Runner_Web3D
+
+3. Install the dependencies (only needed the first time, or if package.json changes):
+   npm install
+
+4. Start the local development server:
+   npm start
+   (or run: npm run dev / vite)
+
+5. Open your browser and go to the local URL provided in the terminal (usually http://localhost:3000 or http://localhost:5173).
+
+

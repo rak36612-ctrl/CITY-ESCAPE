@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 820" width="100%" role="img">
+    <title>3D-style Human Runner</title>
+    <desc>Rear view of a muscular human runner mid-stride on a dark track.</desc>
+
+    <!-- BACKGROUND & TRACK -->
+    <rect width="680" height="820" fill="#0a0a0a" />
+    <path d="M 280 150 L 100 820 L 160 820 L 310 150 Z" fill="#151515" />
+    <path d="M 400 150 L 580 820 L 520 820 L 370 150 Z" fill="#151515" />
+    <line x1="280" y1="150" x2="100" y2="820" stroke="#ffffff" stroke-width="4" stroke-dasharray="15, 25" opacity="0.4" />
+    <line x1="400" y1="150" x2="580" y2="820" stroke="#ffffff" stroke-width="4" stroke-dasharray="15, 25" opacity="0.4" />
+
+    <!-- GROUND SHADOW -->
+    <ellipse cx="330" cy="790" rx="90" ry="20" fill="#000000" opacity="0.6" />
+
+    <!-- LEFT LEG (Extended back & pushing off) -->
+    <!-- Thigh Shading -->
+    <path d="M 295 480 Q 260 560 280 620 L 325 610 Q 340 540 335 480 Z" fill="#c3a073" />
+    <path d="M 298 480 Q 275 560 290 620 L 325 610 Q 338 540 335 480 Z" fill="#d2b084" />
+    <path d="M 305 480 Q 290 560 300 620 L 325 610 Q 335 540 335 480 Z" fill="#e8c99a" />
+    
+    <!-- Calf Shading -->
+    <path d="M 278 610 Q 250 670 280 750 L 315 740 Q 330 670 322 610 Z" fill="#c3a073" />
+    <path d="M 285 610 Q 260 670 285 750 L 315 740 Q 325 670 322 610 Z" fill="#d2b084" />
+    <path d="M 292 610 Q 275 670 295 750 L 315 740 Q 320 670 322 610 Z" fill="#e8c99a" />
+    
+    <!-- Left Knee Joint -->
+    <circle cx="300" cy="615" r="23" fill="#d2b084" />
+    <circle cx="305" cy="615" r="18" fill="#e8c99a" />
+
+    <!-- Left Shoe -->
+    <path d="M 278 745 Q 260 780 270 810 L 310 805 Q 320 780 315 735 Z" fill="#222222" />
+    <path d="M 285 745 Q 275 780 280 810 L 310 805 Q 315 780 315 735 Z" fill="#111111" />
+    <!-- Left Midsole -->
+    <path d="M 268 800 Q 270 815 285 815 L 310 810 Q 315 802 312 795 L 268 800 Z" fill="#ffffff" />
+    
+    <!-- RIGHT LEG (Bent forward, mid-stride jump) -->
+    <!-- Thigh Foreshortened Shading -->
+    <path d="M 345 480 Q 360 560 380 570 L 415 560 Q 395 510 395 480 Z" fill="#b99263" />
+    <path d="M 350 480 Q 365 560 380 570 L 410 560 Q 390 510 395 480 Z" fill="#caa67b" />
+    <path d="M 358 480 Q 370 560 380 570 L 405 560 Q 385 510 395 480 Z" fill="#e8c99a" />
+    
+    <!-- Right Calf Shading -->
+    <path d="M 378 560 Q 395 620 375 700 L 340 690 Q 350 620 345 560 Z" fill="#c3a073" />
+    <path d="M 378 560 Q 390 620 375 700 L 345 690 Q 355 620 345 560 Z" fill="#d2b084" />
+    <path d="M 378 560 Q 385 620 375 700 L 352 690 Q 360 620 345 560 Z" fill="#e8c99a" />
+
+    <!-- Right Knee Joint -->
+    <circle cx="380" cy="565" r="23" fill="#caa67b" />
+    <circle cx="380" cy="565" r="18" fill="#e8c99a" />
+    
+    <!-- Right Shoe (In air) -->
+    <path d="M 338 685 Q 310 705 320 735 L 385 715 Q 385 695 375 685 Z" fill="#111111" />
+    <path d="M 338 685 Q 320 705 330 735 L 360 725 Q 360 695 375 685 Z" fill="#222222" />
+    <!-- Right Midsole -->
+    <path d="M 322 725 L 318 735 L 380 720 L 385 710 Z" fill="#ffffff" />
+    
+    <!-- LOWER BODY SHORTS -->
+    <path d="M 285 410 Q 340 430 395 410 L 405 480 Q 375 510 340 480 Q 295 510 275 480 Z" fill="#0f3480" />
+    <path d="M 292 410 Q 340 430 388 410 L 398 480 Q 375 500 340 470 Q 295 500 282 480 Z" fill="#1542a1" />
+    <path d="M 300 410 Q 340 425 380 410 L 388 480 Q 375 490 340 460 Q 300 490 292 480 Z" fill="#1a4db5" />
+    <path d="M 283 400 Q 340 415 397 400 L 395 410 Q 340 430 285 410 Z" fill="#0c255c" /> <!-- Waistband -->
+    
+    <!-- TORSO (Athletic White Shirt) -->
+    <path d="M 285 400 Q 340 415 395 400 L 405 270 Q 340 240 280 280 Z" fill="#d0d0d0" />
+    <path d="M 290 400 Q 340 415 390 400 L 395 270 Q 340 250 285 280 Z" fill="#e4e4e4" />
+    <path d="M 300 400 Q 340 410 380 400 L 385 270 Q 340 255 295 280 Z" fill="#ffffff" />
+    <!-- Back Muscles Shade Profile -->
+    <path d="M 340 260 Q 330 320 335 390 Q 345 390 345 260 Z" fill="#f4f4f4" opacity="0.6"/>
+
+    <!-- LEFT ARM (Bent forward away from viewer) -->
+    <!-- Left Shoulder -->
+    <circle cx="280" cy="275" r="28" fill="#d2b084" />
+    <circle cx="285" cy="275" r="22" fill="#e8c99a" />
+    <!-- Left Upper Arm Shading -->
+    <path d="M 255 285 Q 235 320 245 350 L 285 340 Q 295 310 295 285 Z" fill="#d2b084" />
+    <path d="M 262 285 Q 248 320 255 350 L 285 340 Q 290 310 290 285 Z" fill="#e8c99a" />
+    <!-- Left Forearm -->
+    <path d="M 245 350 Q 225 330 230 310 L 265 305 Q 275 320 285 340 Z" fill="#c3a073" />
+    <path d="M 252 350 Q 235 330 238 310 L 265 305 Q 270 320 278 340 Z" fill="#e8c99a" />
+    <!-- Left Wristband -->
+    <path d="M 230 310 L 265 305 L 260 295 L 225 300 Z" fill="#cc0000" />
+    <path d="M 227 305 L 262 300 L 260 295 L 225 300 Z" fill="#ffffff" />
+    <!-- Left Hand (Fist) -->
+    <ellipse cx="240" cy="285" rx="16" ry="12" fill="#c3a073" transform="rotate(30 240 285)" />
+    <ellipse cx="240" cy="285" rx="12" ry="10" fill="#e8c99a" transform="rotate(30 240 285)" />
+
+    <!-- RIGHT ARM (Pushed backwards toward viewer) -->
+    <!-- Right Shoulder -->
+    <circle cx="410" cy="265" r="30" fill="#caa67b" />
+    <circle cx="410" cy="265" r="24" fill="#e8c99a" />
+    <!-- Right Upper Arm Shading -->
+    <path d="M 385 265 Q 405 320 440 340 L 460 305 Q 435 260 425 250 Z" fill="#b99263" />
+    <path d="M 395 265 Q 410 320 440 340 L 452 305 Q 430 260 425 250 Z" fill="#caa67b" />
+    <path d="M 405 265 Q 418 320 440 340 L 445 305 Q 425 260 420 250 Z" fill="#e8c99a" />
+    <!-- Right Elbow -->
+    <circle cx="450" cy="325" r="20" fill="#caa67b" />
+    <circle cx="450" cy="325" r="16" fill="#e8c99a" />
+    <!-- Right Forearm -->
+    <path d="M 435 315 Q 470 270 475 220 L 505 235 Q 480 295 465 330 Z" fill="#b99263" />
+    <path d="M 440 315 Q 470 270 475 220 L 498 235 Q 475 295 460 330 Z" fill="#caa67b" />
+    <path d="M 445 315 Q 470 270 475 220 L 490 235 Q 468 295 455 330 Z" fill="#e8c99a" />
+    <!-- Right Wristband -->
+    <path d="M 470 227 L 500 242 L 495 253 L 465 238 Z" fill="#cc0000" />
+    <path d="M 472 232 L 498 247 L 495 253 L 465 238 Z" fill="#ffffff" />
+    <!-- Right Hand (Fist) -->
+    <ellipse cx="488" cy="210" rx="15" ry="18" fill="#b99263" transform="rotate(-30 488 210)" />
+    <ellipse cx="488" cy="210" rx="12" ry="14" fill="#e8c99a" transform="rotate(-30 488 210)" />
+
+    <!-- NECK & HEAD -->
+    <!-- Neck Shading -->
+    <path d="M 320 220 L 360 220 L 365 260 L 315 260 Z" fill="#b99263" />
+    <path d="M 325 220 L 355 220 L 355 260 L 325 260 Z" fill="#caa67b" />
+    <!-- Shirt Collar Rim -->
+    <circle cx="340" cy="250" r="30" fill="#f0f0f0" /> 
+    <!-- Skin Neck Light -->
+    <path d="M 325 220 L 355 220 L 350 250 L 330 250 Z" fill="#e8c99a" /> 
+    
+    <!-- Ears -->
+    <ellipse cx="304" cy="180" rx="8" ry="15" fill="#caa67b" transform="rotate(-15 304 180)"/>
+    <ellipse cx="306" cy="180" rx="6" ry="12" fill="#e8c99a" transform="rotate(-15 306 180)"/>
+    <ellipse cx="376" cy="180" rx="8" ry="15" fill="#caa67b" transform="rotate(15 376 180)"/>
+    <ellipse cx="374" cy="180" rx="6" ry="12" fill="#e8c99a" transform="rotate(15 374 180)"/>
+
+    <!-- Head Base -->
+    <ellipse cx="340" cy="175" rx="36" ry="46" fill="#caa67b" />
+    <ellipse cx="340" cy="175" rx="32" ry="42" fill="#e8c99a" />
+    
+    <!-- Hair Shading -->
+    <path d="M 302 185 Q 295 130 340 125 Q 385 130 378 185 Q 360 200 340 195 Q 320 200 302 185 Z" fill="#111111" />
+    <path d="M 306 182 Q 300 135 340 130 Q 380 135 374 182 Q 360 195 340 190 Q 320 195 306 182 Z" fill="#222222" />
+    <path d="M 315 175 Q 315 140 340 138 Q 365 140 365 175 Q 350 185 340 182 Q 330 185 315 175 Z" fill="#333333" />
+    
+</svg>

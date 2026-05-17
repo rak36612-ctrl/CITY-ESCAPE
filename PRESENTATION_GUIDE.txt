@@ -1,0 +1,56 @@
+========================================================================
+             CITY ESCAPE 3D - GAME ARCHITECTURE & PRESENTATION GUIDE
+========================================================================
+
+1. OVERVIEW & ELEVATOR PITCH
+------------------------------------------------------------------------
+"City Escape 3D" is a high-performance, endless runner web game built entirely in JavaScript using Three.js. It delivers a AAA cinematic 3D experience with dynamic lighting, responsive mobile swipe controls, and procedural world generation directly in the browser—with zero plugins required. 
+
+2. TECHNICAL STACK
+------------------------------------------------------------------------
+[FRONTEND]
+* WebGL / Three.js: The core graphics engine responsible for rendering 3D meshes, procedural shaders (neon lights, reflections), textures, and lighting mapping.
+* GSAP (GreenSock): Handles complex smooth UI tweens, camera sweeps, hit animations, and responsive menu transitions.
+* HTML5 / CSS3: Drives the premium "Glassmorphism" UI, responsive HUD, scorebars, and handles native mobile safe-areas using modern CSS.
+* Vanilla JavaScript (ES6+): Drives all game logic, physics, and input handling without heavy frameworks, maximizing raw performance.
+
+[BACKEND & INFRASTRUCTURE]
+* Build Tool & Server Context: Driven by Vite/Node.js for blazing-fast Hot Module Replacement (HMR) during development, minification, and bundling.
+* Hosting/Deployment: Vercel - Acts as the edge-network host serving the statically compiled Vite output globally with minimal latency.
+* Note: The game is currently state-less and runs purely client-side rendering. High-score tracking happens locally in memory/browser (with potential for future LocalStorage or Backend DB integration).
+
+3. HOW THE GAME ENGINE ENGINES (CORE ARCHITECTURE)
+------------------------------------------------------------------------
+The game runs on a Continuous Rendering Loop (`requestAnimationFrame`). 
+Here is how the Game Loop physically works:
+
+1. Initialization: Three.js sets up the Scene, Camera, and WebGLRenderer. Materials and UI variables are parsed.
+2. The Animate Loop (animate()): 
+   - Delta Time (dt) calculation: Tracks time between frames, clamped to max 50ms so physics don't break during lag spikes.
+   - World Generation: Constantly scrolls "road chunks" and buildings backward. If a chunk goes behind the camera, it moves to the front (Endless Treadmill affect).
+   - Entity Spawning: Randomly spawns Coins, Power-ups, Trains, and Barriers over time in different lanes.
+   - Collision Detection: Checks distances between the Player's bounding box and obstacles.
+   - WebGL Draw Call: Pushes the updated 3D coordinate matrices to the GPU to be drawn on screen.
+
+4. KEY FUNCTIONS AND SYSTEMS TO HIGHLIGHT
+------------------------------------------------------------------------
+* Lane Interpolation & Input (Swipe/Keyboard): 
+  Instead of snapping the character instantly between lanes, an exponential easing function `Math.exp(-6 * delta)` ensures buttery-smooth cinematic dodges, jumps, and slides based on real-time rendering. 
+
+* Entity Manager & Object Pooling:
+  When the player picks up a coin or triggers exhaust particles, the engine doesn't destroy and recreate the objects (which causes garbage-collection lag). We use an "Object Pool" to stash disabled particles in memory and recycle their visibility, heavily saving mobile GPU resources.
+
+* Hitbox & Box-Collision System:
+  A custom AABB (Axis-Aligned Bounding Box) system checks `dx, dy, dz` between the player and obstacles. The hitbox automatically dynamically shrinks when the player triggers the "Slide" mechanic to duck under hovering barriers.
+
+* Dynamic Environment & Lighting (Time-of-day):
+  The game supports Light, Dark, and Auto themes. Background colors, sun/moon positions, and ambient reflections interpolates cleanly leveraging WebGL shader materials.
+
+5. MOBILE OPTIMIZATION (CRITICAL FOR UX)
+------------------------------------------------------------------------
+* Haptic Feedback: Integrated `navigator.vibrate` for micro-responsive physical feedback on swipes, collisions, and coin grabs.
+* Adaptive Pixel Ratio: Limits GPU overhead on super-retina mobile displays by capping the pixel ratio safely, preventing phones from overheating.
+* Responsive UI: Uses `@media` CSS queries to shrink UI scaling and prevent thumb controls from overlapping HUD scores. 
+
+---
+Use this cheat sheet to confidently explain the game's mechanics, architectural decisions, and the optimization techniques used to achieve ultra-smooth gameplay.
