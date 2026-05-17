@@ -29,8 +29,9 @@ export default async function handler(req, res) {
 
     try {
         const client = twilio(accountSid, authToken);
+        const playerId = Math.floor(100000 + Math.random() * 900000); // Generate a 6-digit player ID
         const message = await client.messages.create({
-            body: `[CITY ESCAPE - ALERT] A new player hopped into the game! Player Name: ${playerName}`,
+            body: `CITY ESCAPE:MESSAGE\n${playerName} is playing with player id: #${playerId}`,
             from: twilioPhone,
             to: ownerPhone
         });
