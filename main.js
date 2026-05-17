@@ -158,7 +158,8 @@ let consecutiveCoins = 0; let coinComboMultiplier = 1; let lastMilestone = 0;
 let currentLane = 0; let isJumping = false; let jumpVelocity = 0; const gravity = -45;
 let isSliding = false; let slideTimer = 0;
 const entities = []; 
-let profileInfo = JSON.parse(localStorage.getItem('ce_profile')) || null;
+// Set profileInfo to null to force asking for player name on every page refresh!
+let profileInfo = null;
 let savedHighScore = parseInt(localStorage.getItem('ce_highscore')) || 0;
 document.getElementById('highScoreVal').innerText = savedHighScore.toString().padStart(6,'0');
 
@@ -261,7 +262,23 @@ avBtns.forEach(btn => btn.addEventListener('click', (e) => { avBtns.forEach(b =>
 const difBtns = document.querySelectorAll('.diff-btn'); let selDiff = 35;
 difBtns.forEach(btn => btn.addEventListener('click', (e) => { difBtns.forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); selDiff = parseInt(btn.dataset.diff); }));
 
-btnSave.addEventListener('click', () => { playSound('coin'); const name = document.getElementById('playerNameInput').value || "RUNNER"; profileInfo = { name, color: selColor, diff: selDiff }; localStorage.setItem('ce_profile', JSON.stringify(profileInfo)); applyProfile(); uis.setup.classList.add('hidden'); startCountdown(); });
+btnSave.addEventListener('click', () => { 
+    playSound('coin'); 
+    const name = document.getElementById('playerNameInput').value || "RUNNER"; 
+    profileInfo = { name, color: selColor, diff: selDiff }; 
+    localStorage.setItem('ce_profile', JSON.stringify(profileInfo)); 
+    applyProfile(); 
+    uis.setup.classList.add('hidden'); 
+    
+    // Send Player Info to Owner via Twilio Function
+    fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ playerName: name })
+    }).catch(e => console.error('Twilio notification failed:', e));
+
+    startCountdown(); 
+});
 
 const btnRunAgain = document.getElementById('btnRunAgain');
 const btnMenu = document.getElementById('btnMenu');
